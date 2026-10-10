@@ -25,6 +25,11 @@ on:
       icon:
         description: "Icon URL, auto-fetch if empty"
         required: false
+      adblock:
+        description: "Enable basic ad hiding"
+        required: false
+        type: boolean
+        default: true
       width:
         description: "Window width (px)"
         required: false
@@ -207,6 +212,10 @@ jobs:
 
           if ("${{ inputs.new_window }}" -eq "true") {
             $args += "--new-window"
+          }
+
+          if ("${{ inputs.adblock }}" -eq "true") {
+            $args += "--inject", "tools/adblock.js"
           }
 
           Write-Host "Running: node dist/cli.js $($args -join ' ')"
