@@ -1,4 +1,3 @@
-
 (() => {
   "use strict";
 
@@ -12,14 +11,12 @@
     "[class~='ad-container']",
     "[class~='advertisement']",
     "[data-ad-slot]",
-    "[data-ad-unit]"
+    "[data-ad-unit]",
   ];
 
   const style = document.createElement("style");
-  style.textContent = selectors
-    .join(",\n")
-    + " { display: none !important; }";
-  
+  style.textContent = selectors.join(",\n") + " { display: none !important; }";
+
   (document.head || document.documentElement).appendChild(style);
 
   function cleanAds(root) {
@@ -27,8 +24,9 @@
 
     for (const selector of selectors) {
       try {
-        if (root.matches?.(selector)) root.style.setProperty("display", "none", "important");
-        root.querySelectorAll?.(selector).forEach(el => {
+        if (root.matches?.(selector))
+          root.style.setProperty("display", "none", "important");
+        root.querySelectorAll?.(selector).forEach((el) => {
           el.style.setProperty("display", "none", "important");
         });
       } catch (_) {}
@@ -37,7 +35,7 @@
 
   cleanAds(document);
 
-  const observer = new MutationObserver(records => {
+  const observer = new MutationObserver((records) => {
     for (const record of records) {
       for (const node of record.addedNodes) {
         if (node.nodeType === Node.ELEMENT_NODE) cleanAds(node);
@@ -47,6 +45,6 @@
 
   observer.observe(document.documentElement, {
     childList: true,
-    subtree: true
+    subtree: true,
   });
 })();
