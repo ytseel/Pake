@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-update-theme-mode"
+description = "Enables the update_theme_mode command without any pre-configured scope."
+commands.allow = ["update_theme_mode"]
+
+[[permission]]
+identifier = "deny-update-theme-mode"
+description = "Denies the update_theme_mode command without any pre-configured scope."
+commands.deny = ["update_theme_mode"]
