@@ -442,6 +442,29 @@ pub fn run_app() {
 
             let window = set_window(app.app_handle(), &pake_config, &tauri_config)?;
 
+            // Install the native Brave adblock-rust request filter on Windows.
+            // The CLI's --inject tools/adblock.js option only provides cosmetic
+            // hiding; this native handler filters network requests in WebView2.
+            #[cfg(windows)]
+            if pake_config
+                .windows
+                .first()
+                .is_some_and(|window_config| window_config.enable_adblock)
+            {
+                let cache_dir = app.path().app_cache_dir()?.join("pake-adblock");
+                let adblock_state = crate::adblock::AdblockState::load(cache_dir);
+                let state_for_webview = Arc::clone(&adblock_state);
+                if let Err(error) = window.with_webview(move |webview| {
+                    app::navigation::install_adblock(webview, state_for_webview);
+                }) {
+                    eprintln!("[Pake Adblock] Failed to attach WebView2 filter: {error}");
+                } else {
+                    // Keep the state owned by the app as well as by the COM callback.
+                    app.manage(adblock_state);
+                    eprintln!("[Pake Adblock] Native request filtering initialized.");
+                }
+            }
+
             // An explicit --dark-mode wins over the desktop preference.
             #[cfg(target_os = "linux")]
             if !pake_config.windows[0].dark_mode {
