@@ -455,7 +455,7 @@ pub fn run_app() {
                 let adblock_state = crate::adblock::AdblockState::load(cache_dir);
                 let state_for_webview = Arc::clone(&adblock_state);
                 if let Err(error) = window.with_webview(move |webview| {
-                    app::navigation::install_adblock(webview, state_for_webview);
+                    app::navigation::install_adblock(&webview, state_for_webview);
                 }) {
                     eprintln!("[Pake Adblock] Failed to attach WebView2 filter: {error}");
                 } else {
