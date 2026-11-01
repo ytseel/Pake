@@ -728,7 +728,9 @@ fn build_window(
     // Windows and Linux: set data_directory before proxy_url
     #[cfg(not(target_os = "macos"))]
     {
-        window_builder = window_builder.data_directory(_data_dir.clone()).theme(theme);
+        window_builder = window_builder
+            .data_directory(_data_dir.clone())
+            .theme(theme);
 
         if window_config.hide_window_decorations {
             window_builder = window_builder.decorations(false);

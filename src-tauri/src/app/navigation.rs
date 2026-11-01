@@ -4,7 +4,6 @@
 
 use tauri::WebviewWindow;
 
-
 /// Install Brave's request filter on a Windows WebView2 instance.
 ///
 /// The callback is registered for all resource contexts so EasyList rules can
@@ -16,20 +15,15 @@ pub fn install_adblock(
 ) {
     use webview2_com::{
         Microsoft::Web::WebView2::Win32::{
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_DOCUMENT,
+            ICoreWebView2_2, COREWEBVIEW2_WEB_RESOURCE_CONTEXT,
+            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL, COREWEBVIEW2_WEB_RESOURCE_CONTEXT_DOCUMENT,
             COREWEBVIEW2_WEB_RESOURCE_CONTEXT_EVENT_SOURCE,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FETCH,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FONT,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_IMAGE,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_MEDIA,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_PING,
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_SCRIPT,
+            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FETCH, COREWEBVIEW2_WEB_RESOURCE_CONTEXT_FONT,
+            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_IMAGE, COREWEBVIEW2_WEB_RESOURCE_CONTEXT_MEDIA,
+            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_PING, COREWEBVIEW2_WEB_RESOURCE_CONTEXT_SCRIPT,
             COREWEBVIEW2_WEB_RESOURCE_CONTEXT_STYLESHEET,
             COREWEBVIEW2_WEB_RESOURCE_CONTEXT_TEXT_TRACK,
             COREWEBVIEW2_WEB_RESOURCE_CONTEXT_XML_HTTP_REQUEST,
-            ICoreWebView2_2,
         },
         WebResourceRequestedEventHandler,
     };
@@ -60,10 +54,7 @@ pub fn install_adblock(
     };
 
     let filter_added = unsafe {
-        core2.AddWebResourceRequestedFilter(
-            w!("*"),
-            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL,
-        )
+        core2.AddWebResourceRequestedFilter(w!("*"), COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
     };
     if let Err(error) = filter_added {
         eprintln!("[Pake Adblock] Cannot register request filter: {error}");

@@ -9,7 +9,10 @@ pub const FILTER_FILES: [&str; 2] = ["easylist.txt", "easyprivacy.txt"];
 
 const FILTER_LISTS: [(&str, &str); 2] = [
     ("easylist.txt", "https://easylist.to/easylist/easylist.txt"),
-    ("easyprivacy.txt", "https://easylist.to/easylist/easyprivacy.txt"),
+    (
+        "easyprivacy.txt",
+        "https://easylist.to/easylist/easyprivacy.txt",
+    ),
 ];
 
 /// Downloads supported filter lists and atomically replaces their cache files.
@@ -34,7 +37,11 @@ pub fn refresh_filter_cache(cache_dir: &Path) -> bool {
 
     let mut refreshed = false;
     for (filename, url) in FILTER_LISTS {
-        match client.get(url).send().and_then(|response| response.error_for_status()) {
+        match client
+            .get(url)
+            .send()
+            .and_then(|response| response.error_for_status())
+        {
             Ok(response) => match response.text() {
                 Ok(contents) if contents.contains("!") || contents.contains("##") => {
                     if write_cache_atomically(cache_dir, filename, contents.as_bytes()).is_ok() {
