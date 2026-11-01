@@ -1,5 +1,7 @@
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 mod app;
+#[cfg(windows)]
+mod adblock;
 mod util;
 
 use std::sync::{

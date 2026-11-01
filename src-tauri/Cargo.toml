@@ -61,6 +61,10 @@ webkit2gtk = { version = "=2.0.2", features = ["v2_38"] }
 zbus = "5.14"
 
 [target.'cfg(windows)'.dependencies]
+# Brave's adblock-rust engine. Disable its single-thread feature so the
+# immutable engine can be safely shared with WebView2's COM callback.
+adblock = { version = "0.13.5", default-features = false, features = ["embedded-domain-resolver", "full-regex-handling"] }
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
 windows-sys = { version = "0.61.2", features = [
   "Win32_Foundation",
   "Win32_UI_Shell",

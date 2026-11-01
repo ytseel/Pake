@@ -48,10 +48,17 @@ pub struct WindowConfig {
     pub min_height: f64,
     #[serde(default)]
     pub ignore_certificate_errors: bool,
+    /// Enable Brave adblock-rust network filtering in the Windows WebView2 host.
+    #[serde(default = "default_enable_adblock")]
+    pub enable_adblock: bool,
 }
 
 fn default_zoom() -> u32 {
     100
+}
+
+fn default_enable_adblock() -> bool {
+    true
 }
 
 #[cfg(any(windows, test))]

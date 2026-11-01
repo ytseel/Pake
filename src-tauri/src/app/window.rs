@@ -480,6 +480,25 @@ fn build_window(
         url
     };
 
+    // Start enabled WebView2 apps on about:blank so the native request
+    // interceptor is registered before the first remote document is requested.
+    #[cfg(target_os = "windows")]
+    let adblock_target_url = if window_config.enable_adblock {
+        match &url {
+            WebviewUrl::External(target) => Some(target.clone()),
+            _ => None,
+        }
+    } else {
+        None
+    };
+
+    #[cfg(target_os = "windows")]
+    let url = if adblock_target_url.is_some() {
+        WebviewUrl::External(Url::parse("about:blank").expect("about:blank is a valid URL"))
+    } else {
+        url
+    };
+
     let user_agent = config.user_agent.get();
 
     let config_script = format!(
@@ -709,7 +728,7 @@ fn build_window(
     // Windows and Linux: set data_directory before proxy_url
     #[cfg(not(target_os = "macos"))]
     {
-        window_builder = window_builder.data_directory(_data_dir).theme(theme);
+        window_builder = window_builder.data_directory(_data_dir.clone()).theme(theme);
 
         if window_config.hide_window_decorations {
             window_builder = window_builder.decorations(false);
@@ -835,6 +854,26 @@ fn build_window(
     window_builder = window_builder.on_navigation(|_| true);
 
     let window = window_builder.build()?;
+
+    #[cfg(target_os = "windows")]
+    if window_config.enable_adblock {
+        static ADBLOCK_STATE: OnceLock<std::sync::Arc<crate::adblock::AdblockState>> =
+            OnceLock::new();
+        let state = ADBLOCK_STATE
+            .get_or_init(|| crate::adblock::AdblockState::load(_data_dir.join("adblock")))
+            .clone();
+        if let Err(error) = window.with_webview(move |webview| {
+            crate::app::navigation::install_adblock(&webview, state);
+        }) {
+            eprintln!("[Pake Adblock] Failed to install WebView2 request filtering: {error}");
+        }
+
+        if let Some(target_url) = adblock_target_url {
+            if let Err(error) = window.navigate(target_url) {
+                eprintln!("[Pake Adblock] Failed to navigate to the configured URL: {error}");
+            }
+        }
+    }
 
     #[cfg(target_os = "windows")]
     {
