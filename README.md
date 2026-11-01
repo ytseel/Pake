@@ -240,3 +240,8 @@ Pake wouldn't be possible without these incredible contributors. ❤️
 ## License
 
 Pake is open source under GPL-3.0, see [LICENSE](./LICENSE) and [Pake Output Exception](./LICENSE-EXCEPTION); apps you build with Pake are entirely yours to use and distribute. If you fork Pake into your own product, to avoid confusion please give it a different name and credit Pake as the source.
+
+
+## Built-in ad blocking (Windows)
+
+This fork includes an experimental Windows WebView2 integration of Brave's `adblock-rust` engine. See [the ad-blocking guide](docs/brave-adblock.md) for scope, configuration, and limitations.

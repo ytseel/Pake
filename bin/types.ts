@@ -207,6 +207,8 @@ export interface WindowConfig {
   min_width: number;
   min_height: number;
   ignore_certificate_errors: boolean;
+  /** Enable Brave adblock-rust network filtering on Windows WebView2. */
+  enable_adblock?: boolean;
   new_window: boolean;
 }
 
